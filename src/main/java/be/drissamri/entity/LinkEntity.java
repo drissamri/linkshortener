@@ -1,5 +1,6 @@
 package be.drissamri.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,17 +15,25 @@ import java.util.Objects;
 // http://stackoverflow.com/questions/22362534/can-i-use-spring-data-jpa-auditing-without-the-orm-xml-file-using-javaconfig-in
 @Table(name = "LINK")
 public class LinkEntity implements Serializable {
+  @JsonIgnore
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
+
   @Column(name = "url", nullable = false, unique = true)
   private String url;
   @Column(name = "hash", nullable = false, unique = true)
   private String hash;
+
+  @JsonIgnore
   @CreatedDate
   private ZonedDateTime createdDate;
-  @LastModifiedDate//
+  @JsonIgnore
+  @LastModifiedDate
   private ZonedDateTime modifiedDate;
+  @JsonIgnore
+  @Version
+  private long version;
 
   public long getId() {
     return id;
@@ -64,6 +73,10 @@ public class LinkEntity implements Serializable {
 
   public void setModifiedDate(ZonedDateTime modifiedDate) {
     this.modifiedDate = modifiedDate;
+  }
+
+  public long getVersion() {
+    return version;
   }
 
   //https://plugins.jetbrains.com/plugin/6875?pr=idea

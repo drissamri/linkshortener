@@ -1,5 +1,5 @@
 package be.drissamri.service;
 
-public interface URLShortenService {
+public interface HashService {
   String shorten(String url);
 }

@@ -1,7 +1,9 @@
-package be.drissamri.service;
+package be.drissamri.service.impl;
 
 import be.drissamri.entity.LinkEntity;
 import be.drissamri.repository.LinkRepository;
+import be.drissamri.service.LinkService;
+import be.drissamri.service.HashService;
 import be.drissamri.service.exception.LinkNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +17,10 @@ import java.util.List;
 public class LinkServiceImpl implements LinkService {
   private Logger logger = LoggerFactory.getLogger(LinkServiceImpl.class);
   private LinkRepository linkRepository;
-  private URLShortenService shortenService;
+  private HashService shortenService;
 
   @Autowired
-  public LinkServiceImpl(URLShortenService shortenService, LinkRepository linkRepository) {
+  public LinkServiceImpl(HashService shortenService, LinkRepository linkRepository) {
     this.linkRepository = linkRepository;
     this.shortenService = shortenService;
   }
@@ -65,6 +67,7 @@ public class LinkServiceImpl implements LinkService {
   }
 
   private LinkEntity createAndSaveLink(String url) {
+    // TODO: Validate URL for safety (3th party services supply this service)
     String hash = shortenService.shorten(url);
 
     LinkEntity requestedLink = new LinkEntity();

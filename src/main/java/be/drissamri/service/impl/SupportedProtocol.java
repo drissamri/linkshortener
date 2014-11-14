@@ -1,4 +1,4 @@
-package be.drissamri.service;
+package be.drissamri.service.impl;
 
 import org.springframework.util.StringUtils;
 

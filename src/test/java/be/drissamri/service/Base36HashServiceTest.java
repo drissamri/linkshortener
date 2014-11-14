@@ -1,12 +1,13 @@
 package be.drissamri.service;
 
 import be.drissamri.service.exception.InvalidURLException;
+import be.drissamri.service.impl.Base36HashService;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Base36ShortenServiceTest {
-  private Base36ShortenService base36ShortenService = new Base36ShortenService();
+public class Base36HashServiceTest {
+  private Base36HashService base36ShortenService = new Base36HashService();
 
   @Test
   public void validHttpUrlShouldReturnAHash() {

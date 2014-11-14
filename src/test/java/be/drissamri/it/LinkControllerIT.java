@@ -99,8 +99,6 @@ public class LinkControllerIT {
           .then().log().all()
             .statusCode(HttpStatus.OK.value())
             .body("url", is(url))
-            .body("createdDate", not(empty()))
-            .body("modifiedDate", not(empty()))
             .body("hash", not(empty()))
             .extract().as(LinkEntity.class);
         // @formatter:on

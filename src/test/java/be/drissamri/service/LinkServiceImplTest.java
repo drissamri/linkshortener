@@ -4,6 +4,7 @@ import be.drissamri.LinkEntityBuilder;
 import be.drissamri.entity.LinkEntity;
 import be.drissamri.repository.LinkRepository;
 import be.drissamri.service.exception.LinkNotFoundException;
+import be.drissamri.service.impl.LinkServiceImpl;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class LinkServiceImplTest {
   @Mock
   private LinkRepository linkRepository;
   @Mock
-  private URLShortenService shortenService;
+  private HashService shortenService;
 
   @Before
   public void setUp() {
