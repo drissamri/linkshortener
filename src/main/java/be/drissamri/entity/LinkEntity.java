@@ -12,14 +12,12 @@ import java.util.Objects;
 
 @Entity
 @EntityListeners({AuditingEntityListener.class})
-// http://stackoverflow.com/questions/22362534/can-i-use-spring-data-jpa-auditing-without-the-orm-xml-file-using-javaconfig-in
 @Table(name = "LINK")
 public class LinkEntity implements Serializable {
   @JsonIgnore
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
-
   @Column(name = "url", nullable = false, unique = true)
   private String url;
   @Column(name = "hash", nullable = false, unique = true)
@@ -79,7 +77,6 @@ public class LinkEntity implements Serializable {
     return version;
   }
 
-  //https://plugins.jetbrains.com/plugin/6875?pr=idea
   @Override
   public int hashCode() {
     return Objects.hash(id, url, hash);

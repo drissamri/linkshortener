@@ -5,14 +5,13 @@ import be.drissamri.service.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(LinkController.LINKS)
@@ -32,14 +31,14 @@ public class LinkController {
     return ResponseEntity.ok().body(links);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @RequestMapping(method = POST,  produces = APPLICATION_JSON_VALUE)
   public ResponseEntity<LinkEntity> createShortLink(@RequestParam(value = "url") String longUrl) {
     LinkEntity savedLink = linkService.create(longUrl);
 
     return ResponseEntity.ok().body(savedLink);
   }
 
-  @RequestMapping(method = RequestMethod.DELETE)
+  @RequestMapping(method = DELETE)
   public ResponseEntity<Void> deleteLinkByHash(@RequestParam(value = "hash") String hash) {
     linkService.deleteByHash(hash);
 

@@ -43,7 +43,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <start-class>be.drissamri.LinkshortenerApp</start-class>
+    <start-class>be.drissamri.Application</start-class>
     <skip.unit.tests>false</skip.unit.tests>
     <skip.integration.tests>true</skip.integration.tests>
     <java.version>1.8</java.version>
@@ -72,12 +72,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <!-- Enable Spring Security -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
 
     <!-- Database -->

@@ -2,8 +2,8 @@ package be.drissamri.service.impl;
 
 import be.drissamri.entity.LinkEntity;
 import be.drissamri.repository.LinkRepository;
-import be.drissamri.service.LinkService;
 import be.drissamri.service.HashService;
+import be.drissamri.service.LinkService;
 import be.drissamri.service.exception.LinkNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,23 @@ public class LinkServiceImpl implements LinkService {
 
     linkRepository.delete(foundLink);
     logger.info("Deleted: {}", foundLink);
+  }
+
+  @Override
+  public String findUrlByHash(String hash) {
+    String url;
+
+    logger.trace("Retrieving link for the hash: ", hash);
+    LinkEntity foundLink = linkRepository.findByHash(hash);
+    if (foundLink == null) {
+      logger.info("No link found for hash: {}", hash);
+      url = "http://www.drissamri.be";
+    } else {
+      logger.debug("Found link corresponding to the hash: {} is {}", foundLink);
+      url = foundLink.getUrl();
+    }
+
+    return url;
   }
 
   private LinkEntity createAndSaveLink(String url) {

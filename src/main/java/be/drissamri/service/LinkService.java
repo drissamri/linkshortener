@@ -10,6 +10,8 @@ public interface LinkService {
 
   LinkEntity create(String url);
 
+  String findUrlByHash(String hash);
+
   void deleteByHash(String hash);
 
 }
