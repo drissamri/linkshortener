@@ -44,13 +44,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <start-class>be.drissamri.Application</start-class>
-    <skip.unit.tests>false</skip.unit.tests>
-    <skip.integration.tests>true</skip.integration.tests>
     <java.version>1.8</java.version>
-    <assertj.version>1.7.0</assertj.version>
-    <restassured.version>2.3.4</restassured.version>
+
     <surefire-plugin.version>2.18</surefire-plugin.version>
     <failsafe-plugin.version>2.18</failsafe-plugin.version>
+
+    <assertj.version>1.7.0</assertj.version>
+    <restassured.version>2.3.4</restassured.version>
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
   </properties>
 
   <repositories>
