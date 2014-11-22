@@ -4,7 +4,9 @@ import be.drissamri.entity.LinkEntity;
 import be.drissamri.repository.LinkRepository;
 import be.drissamri.service.HashService;
 import be.drissamri.service.LinkService;
+import be.drissamri.service.exception.InvalidURLException;
 import be.drissamri.service.exception.LinkNotFoundException;
+import be.drissamri.service.verifier.UrlVerifierProviders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,17 @@ import java.util.List;
 
 @Service
 public class LinkServiceImpl implements LinkService {
-  private Logger logger = LoggerFactory.getLogger(LinkServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(LinkServiceImpl.class);
+  private static final String URL_ENCODE_REGEX = "[a-zA-Z0-9_~-]+$";
   private LinkRepository linkRepository;
   private HashService shortenService;
+  private UrlVerifierProviders urlVerifierProviders;
 
   @Autowired
-  public LinkServiceImpl(HashService shortenService, LinkRepository linkRepository) {
+  public LinkServiceImpl(HashService shortenService, UrlVerifierProviders urlVerifierProviders, LinkRepository linkRepository) {
     this.linkRepository = linkRepository;
     this.shortenService = shortenService;
+    this.urlVerifierProviders = urlVerifierProviders;
   }
 
   @Override
@@ -40,16 +45,19 @@ public class LinkServiceImpl implements LinkService {
     logger.debug("Request to shorten: {}", url);
     LinkEntity resultLink;
 
-    LinkEntity existingLink = linkRepository.findByUrl(url);
-    if (existingLink != null) {
-      logger.debug("URL {} already exists in database: {}", url, existingLink);
-      resultLink = existingLink;
+    boolean isSafeUrl = urlVerifierProviders.isSafe(url);
+    if (isSafeUrl) {
+      LinkEntity existingLink = linkRepository.findByUrl(url);
+      if (existingLink != null) {
+        logger.debug("URL {} already exists in database: {}", url, existingLink);
+        resultLink = existingLink;
+      } else {
+        resultLink = createAndSaveLink(url);
+      }
+      return resultLink;
     } else {
-      resultLink = createAndSaveLink(url);
-
+      throw new InvalidURLException("URL " + url + " might pose a security risk, so we won't process it");
     }
-
-    return resultLink;
   }
 
   @Override
@@ -59,7 +67,7 @@ public class LinkServiceImpl implements LinkService {
 
     LinkEntity foundLink = linkRepository.findByHash(hash);
     if (foundLink == null) {
-      throw new LinkNotFoundException();
+      throw new LinkNotFoundException("No link found for hash: " + hash);
     }
 
     linkRepository.delete(foundLink);
@@ -84,7 +92,6 @@ public class LinkServiceImpl implements LinkService {
   }
 
   private LinkEntity createAndSaveLink(String url) {
-    // TODO: Validate URL for safety (3th party services supply this service)
     String hash = shortenService.shorten(url);
 
     LinkEntity requestedLink = new LinkEntity();
@@ -93,7 +100,6 @@ public class LinkServiceImpl implements LinkService {
     LinkEntity savedLink = linkRepository.save(requestedLink);
 
     logger.debug("Successfully created new link: {}", savedLink);
-
     return savedLink;
   }
 }

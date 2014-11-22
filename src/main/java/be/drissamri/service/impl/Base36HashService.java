@@ -1,6 +1,7 @@
 package be.drissamri.service.impl;
 
 import be.drissamri.service.HashService;
+import be.drissamri.service.SupportedProtocol;
 import be.drissamri.service.exception.InvalidURLException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,12 +18,12 @@ public class Base36HashService implements HashService {
 
   private String encode(String url) {
     if (StringUtils.isEmpty(url)) {
-      throw new InvalidURLException();
+      throw new InvalidURLException("Supplied invalid url: empty");
     }
 
     boolean isSupportedProtocol = SupportedProtocol.contains(url);
     if (!isSupportedProtocol) {
-      throw new InvalidURLException();
+      throw new InvalidURLException("URL protocol not supported");
     }
 
     String hexValue = Integer.toString(url.hashCode(), RADIX);

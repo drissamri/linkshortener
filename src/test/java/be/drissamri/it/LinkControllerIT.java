@@ -57,7 +57,7 @@ public class LinkControllerIT {
     LinkEntity savedLink = createLink(LONG_URL);
 
     given()
-      .contentType(MediaType.APPLICATION_JSON_VALUE)
+      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
       .queryParam(PARAMETER_HASH, savedLink.getHash())
     .delete(LinkController.LINKS)
     .then()
@@ -82,8 +82,8 @@ public class LinkControllerIT {
   private LinkEntity createLink(String url) {
     // @formatter:off
     return given()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .queryParam(PARAMETER_URL, url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .formParameter(PARAMETER_URL, url)
           .post(LinkController.LINKS)
           .then()
             .statusCode(HttpStatus.OK.value())

@@ -1,10 +1,10 @@
-package be.drissamri.service.impl;
+package be.drissamri.service;
 
 import org.springframework.util.StringUtils;
 
 public enum SupportedProtocol {
-  HTTP("http://"),
-  HTTPS("https://");
+  HTTP("http"),
+  HTTPS("https");
 
   private String protocol;
 
