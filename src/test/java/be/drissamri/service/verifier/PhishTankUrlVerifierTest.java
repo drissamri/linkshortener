@@ -1,5 +1,6 @@
 package be.drissamri.service.verifier;
 
+import be.drissamri.config.PhishTankConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,7 +28,7 @@ public class PhishTankUrlVerifierTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    phishTankUrlVerifier = new PhishTankUrlVerifier(restTemplate, "apiKey", "apiUrl");
+    phishTankUrlVerifier = new PhishTankUrlVerifier(restTemplate, new PhishTankConfig("apiKey", "apiUrl"));
   }
 
   @Test

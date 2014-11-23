@@ -6,7 +6,7 @@ import be.drissamri.service.HashService;
 import be.drissamri.service.LinkService;
 import be.drissamri.service.exception.InvalidURLException;
 import be.drissamri.service.exception.LinkNotFoundException;
-import be.drissamri.service.verifier.UrlVerifierProviders;
+import be.drissamri.service.verifier.UrlVerifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,13 @@ public class LinkServiceImpl implements LinkService {
   private static final String URL_ENCODE_REGEX = "[a-zA-Z0-9_~-]+$";
   private LinkRepository linkRepository;
   private HashService shortenService;
-  private UrlVerifierProviders urlVerifierProviders;
+  private UrlVerifiers urlVerifiers;
 
   @Autowired
-  public LinkServiceImpl(HashService shortenService, UrlVerifierProviders urlVerifierProviders, LinkRepository linkRepository) {
+  public LinkServiceImpl(HashService shortenService, UrlVerifiers urlVerifiers, LinkRepository linkRepository) {
     this.linkRepository = linkRepository;
     this.shortenService = shortenService;
-    this.urlVerifierProviders = urlVerifierProviders;
+    this.urlVerifiers = urlVerifiers;
   }
 
   @Override
@@ -45,7 +45,7 @@ public class LinkServiceImpl implements LinkService {
     logger.debug("Request to shorten: {}", url);
     LinkEntity resultLink;
 
-    boolean isSafeUrl = urlVerifierProviders.isSafe(url);
+    boolean isSafeUrl = urlVerifiers.isSafe(url);
     if (isSafeUrl) {
       LinkEntity existingLink = linkRepository.findByUrl(url);
       if (existingLink != null) {

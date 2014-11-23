@@ -6,7 +6,7 @@ import be.drissamri.repository.LinkRepository;
 import be.drissamri.service.exception.InvalidURLException;
 import be.drissamri.service.exception.LinkNotFoundException;
 import be.drissamri.service.impl.LinkServiceImpl;
-import be.drissamri.service.verifier.UrlVerifierProviders;
+import be.drissamri.service.verifier.UrlVerifiers;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +31,12 @@ public class LinkServiceImplTest {
   @Mock
   private HashService shortenService;
   @Mock
-  private UrlVerifierProviders urlVerifierProviders;
+  private UrlVerifiers urlVerifiers;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    linkService = new LinkServiceImpl(shortenService, urlVerifierProviders, linkRepository);
+    linkService = new LinkServiceImpl(shortenService, urlVerifiers, linkRepository);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class LinkServiceImplTest {
     LinkEntity link = new LinkEntityBuilder().hash(HASH).url(LONG_URL).build();
     given(linkRepository.save(link)).willReturn(link);
     given(shortenService.shorten(LONG_URL)).willReturn(HASH);
-    given(urlVerifierProviders.isSafe(LONG_URL)).willReturn(true);
+    given(urlVerifiers.isSafe(LONG_URL)).willReturn(true);
 
     LinkEntity result = linkService.create(LONG_URL);
 
@@ -83,7 +83,7 @@ public class LinkServiceImplTest {
   public void shouldReturnExistingHashForExistingLink() {
     LinkEntity link = new LinkEntityBuilder().hash(HASH).url(LONG_URL).build();
     given(linkRepository.findByUrl(LONG_URL)).willReturn(link);
-    given(urlVerifierProviders.isSafe(LONG_URL)).willReturn(true);
+    given(urlVerifiers.isSafe(LONG_URL)).willReturn(true);
 
     LinkEntity result = linkService.create(LONG_URL);
 
@@ -96,7 +96,7 @@ public class LinkServiceImplTest {
 
     given(linkRepository.save(link)).willReturn(link);
     given(shortenService.shorten(LONG_URL)).willReturn(HASH);
-    given(urlVerifierProviders.isSafe(LONG_PHISHING_URL)).willReturn(false);
+    given(urlVerifiers.isSafe(LONG_PHISHING_URL)).willReturn(false);
 
     linkService.create(LONG_URL);
   }

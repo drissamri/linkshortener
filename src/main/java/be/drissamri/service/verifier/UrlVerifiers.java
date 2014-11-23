@@ -11,11 +11,12 @@ import java.net.URLEncoder;
 import java.util.List;
 
 @Component
-public class UrlVerifierProviders {
+public class UrlVerifiers {
+  private static final String ENCODING_UTF8 = "UTF-8";
   private List<UrlVerifier> urlVerifiers;
 
   @Autowired
-  public UrlVerifierProviders(List<UrlVerifier> urlVerifiers) {
+  public UrlVerifiers(List<UrlVerifier> urlVerifiers) {
     this.urlVerifiers = urlVerifiers;
   }
 
@@ -24,7 +25,7 @@ public class UrlVerifierProviders {
 
     String encodedUrl;
     try {
-      encodedUrl = URLEncoder.encode(url, "UTF-8");
+      encodedUrl = URLEncoder.encode(url, ENCODING_UTF8);
     } catch (UnsupportedEncodingException e) {
       throw new LinkshortenerException("Unable to encode to UTF-8", e);
     }

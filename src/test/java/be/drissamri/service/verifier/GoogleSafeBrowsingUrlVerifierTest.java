@@ -1,6 +1,7 @@
 package be.drissamri.service.verifier;
 
 
+import be.drissamri.config.GoogleSafeBrowsingConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,7 +24,7 @@ public class GoogleSafeBrowsingUrlVerifierTest {
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier(restTemplate, "apiKey", "apiUrl", "apiVersion", "appName", "appVersion");
+    googleSafeBrowsingUrlVerifier = new GoogleSafeBrowsingUrlVerifier(restTemplate, new GoogleSafeBrowsingConfig("apiKey", "apiUrl", "apiVersion", "appName", "appVersion"));
   }
 
   @Test
