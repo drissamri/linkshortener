@@ -1,6 +1,6 @@
 package be.drissamri.service.verifier;
 
-import be.drissamri.config.GoogleSafeBrowsingConfig;
+import be.drissamri.config.GoogleSafeBrowsingConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,10 +13,10 @@ import java.util.Map;
 public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
   private static Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingUrlVerifier.class);
   private static final String PARAMETER_URL = "url";
-  private GoogleSafeBrowsingConfig config;
+  private GoogleSafeBrowsingConf config;
   private RestTemplate restTemplate;
 
-  public GoogleSafeBrowsingUrlVerifier(RestTemplate restTemplate, GoogleSafeBrowsingConfig config) {
+  public GoogleSafeBrowsingUrlVerifier(RestTemplate restTemplate, GoogleSafeBrowsingConf config) {
     this.restTemplate = restTemplate;
     this.config = config;
   }
@@ -39,5 +39,10 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
       LOGGER.warn("Exception occurred during HTTP call to Google Safe Browsing API: {}", restException);
     }
     return isSafeUrl;
+  }
+
+  @Override
+  public boolean canValidate() {
+    return config.isConfigured();
   }
 }

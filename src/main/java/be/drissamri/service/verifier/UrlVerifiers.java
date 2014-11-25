@@ -31,11 +31,12 @@ public class UrlVerifiers {
     }
 
     for (UrlVerifier verifier : urlVerifiers) {
-      if (verifier != null) {
-
+      if (verifier != null && verifier.canValidate()) {
         boolean isValidByProvider = verifier.isSafe(encodedUrl);
+
         if (!isValidByProvider) {
           isValid = false;
+          break;
         }
       }
     }

@@ -46,4 +46,9 @@ public class PhishTankUrlVerifier implements UrlVerifier {
 
     return isSafeUrl;
   }
+
+  @Override
+  public boolean canValidate() {
+    return config.isConfigured();
+  }
 }
