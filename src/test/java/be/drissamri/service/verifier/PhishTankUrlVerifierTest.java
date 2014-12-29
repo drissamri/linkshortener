@@ -1,6 +1,6 @@
 package be.drissamri.service.verifier;
 
-import be.drissamri.config.PhishTankConfig;
+import be.drissamri.config.safebrowsing.PhishTankConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

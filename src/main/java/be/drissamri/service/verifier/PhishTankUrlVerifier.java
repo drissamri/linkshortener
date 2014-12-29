@@ -1,6 +1,6 @@
 package be.drissamri.service.verifier;
 
-import be.drissamri.config.PhishTankConfig;
+import be.drissamri.config.safebrowsing.PhishTankConfig;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.slf4j.Logger;
@@ -35,6 +35,8 @@ public class PhishTankUrlVerifier implements UrlVerifier {
       if (response.getStatusCode() == HttpStatus.OK) {
         boolean isPhishingUrl = JsonPath.parse(response.getBody()).read(IN_DATABASE_PARSE_EXPRESSION);
         if (isPhishingUrl) {
+          LOGGER.warn("Possible malicious link posted: {}", url);
+          LOGGER.debug("PhishTank response: {}", response);
           isSafeUrl = false;
         }
       } else {

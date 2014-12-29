@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
@@ -34,6 +35,7 @@ public class LinkControllerIT {
 
   @Before
   public void setUp() {
+    RestAssured.authentication = basic("admin", "secret");
     RestAssured.port = port;
   }
 

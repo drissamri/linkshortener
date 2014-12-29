@@ -1,5 +1,7 @@
 package be.drissamri.config;
 
+import be.drissamri.config.safebrowsing.GoogleSafeBrowsingConfig;
+import be.drissamri.config.safebrowsing.PhishTankConfig;
 import be.drissamri.service.verifier.GoogleSafeBrowsingUrlVerifier;
 import be.drissamri.service.verifier.PhishTankUrlVerifier;
 import be.drissamri.service.verifier.UrlVerifier;
@@ -27,7 +29,7 @@ public class ServiceConfig {
 
   @Bean
   public UrlVerifier googleSafetyProvider() {
-    GoogleSafeBrowsingConf config = new GoogleSafeBrowsingConf(googleApiKey, googleApiUrl, googleApiVersion, appName, appVersion);
+    GoogleSafeBrowsingConfig config = new GoogleSafeBrowsingConfig(googleApiKey, googleApiUrl, googleApiVersion, appName, appVersion);
     return new GoogleSafeBrowsingUrlVerifier(restTemplate(), config);
   }
 
