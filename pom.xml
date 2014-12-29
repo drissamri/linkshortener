@@ -6,7 +6,7 @@
 
   <groupId>be.drissamri</groupId>
   <artifactId>linkshortener</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>Linkshortener</name>
   <description>Linkshortener REST API</description>
   <url>https://github.com/drissamri/linkshortener</url>
@@ -37,7 +37,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.2.0.RC2</version>
+    <version>1.2.0.RELEASE</version>
     <relativePath/>
   </parent>
 
@@ -46,35 +46,27 @@
     <start-class>be.drissamri.Application</start-class>
     <java.version>1.8</java.version>
 
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
+
     <surefire-plugin.version>2.18</surefire-plugin.version>
     <failsafe-plugin.version>2.18</failsafe-plugin.version>
 
     <assertj.version>1.7.0</assertj.version>
-    <restassured.version>2.3.4</restassured.version>
-    <skip.unit.tests>false</skip.unit.tests>
-    <skip.integration.tests>true</skip.integration.tests>
+    <restassured.version>2.4.0</restassured.version>
     <json-path.version>1.2.0</json-path.version>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>spring-snapshots</id>
-      <url>http://repo.spring.io/libs-snapshot</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>spring-snapshots</id>
-      <url>http://repo.spring.io/libs-snapshot</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Security -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
 
     <!-- Database -->

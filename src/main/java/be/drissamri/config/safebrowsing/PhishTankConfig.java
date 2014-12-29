@@ -1,15 +1,19 @@
-package be.drissamri.config;
+package be.drissamri.config.safebrowsing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 public class PhishTankConfig {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PhishTankConfig.class);
   private final String PARAMETER_API_KEY = "app_key";
   private final String PARAMETER_FORMAT = "format";
   private final String RESPONSE_FORMAT = "json";
   private final String apiUrl;
   private final MultiValueMap<String, String> parameters;
+  private boolean isConfigured = false;
 
   public PhishTankConfig(String apiKey, String apiUrl) {
     this.apiUrl = apiUrl;
@@ -17,6 +21,11 @@ public class PhishTankConfig {
 
     parameters.add(PARAMETER_API_KEY, apiKey);
     parameters.add(PARAMETER_FORMAT, RESPONSE_FORMAT);
+
+    if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) && !StringUtils.isEmpty(parameters.get(PARAMETER_FORMAT))) {
+      LOGGER.info("PhishTank API is configured with an API key");
+      isConfigured = true;
+    }
   }
 
   public String getApiUrl() {
@@ -28,14 +37,6 @@ public class PhishTankConfig {
   }
 
   public boolean isConfigured() {
-    boolean isConfigured = false;
-
-    if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) &&
-      !StringUtils.isEmpty(parameters.get(PARAMETER_FORMAT))) {
-
-      isConfigured = true;
-    }
-
     return isConfigured;
   }
 

@@ -1,11 +1,14 @@
-package be.drissamri.config;
+package be.drissamri.config.safebrowsing;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GoogleSafeBrowsingConf {
+public class GoogleSafeBrowsingConfig {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingConfig.class);
   private final String PARAMETER_API_KEY = "apiKey";
   private final String PARAMETER_API_VERSION = "apiVersion";
   private final String PARAMETER_APP_VERSION = "appVersion";
@@ -13,12 +16,13 @@ public class GoogleSafeBrowsingConf {
   private final Map<String, String> parameters;
 
   private String apiUrl;
+  private boolean isConfigured;
 
-  public GoogleSafeBrowsingConf(String apiKey,
-                                String apiUrl,
-                                String apiVersion,
-                                String appName,
-                                String appVersion) {
+  public GoogleSafeBrowsingConfig(String apiKey,
+                                  String apiUrl,
+                                  String apiVersion,
+                                  String appName,
+                                  String appVersion) {
 
     this.parameters = new HashMap<>();
     parameters.put(PARAMETER_API_KEY, apiKey);
@@ -27,6 +31,13 @@ public class GoogleSafeBrowsingConf {
     parameters.put(PARAMETER_APP_NAME, appName);
 
     this.apiUrl = apiUrl;
+
+    if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) &&
+      !StringUtils.isEmpty(parameters.get(PARAMETER_API_VERSION))) {
+
+      LOGGER.info("Google Safe Browsing API v{} is configured with an API key", apiVersion);
+      isConfigured = true;
+    }
   }
 
   public String getApiUrl() {
@@ -38,13 +49,7 @@ public class GoogleSafeBrowsingConf {
   }
 
   public boolean isConfigured() {
-    boolean isConfigured = false;
-    if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) &&
-      !StringUtils.isEmpty(parameters.get(PARAMETER_API_VERSION))) {
-
-      isConfigured = true;
-    }
-
-    return isConfigured;
+    return this.isConfigured;
   }
+
 }
