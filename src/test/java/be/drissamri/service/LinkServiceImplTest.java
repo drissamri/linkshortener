@@ -43,7 +43,7 @@ public class LinkServiceImplTest {
   public void findShouldReturnLinks() {
     given(linkRepository.findAll()).willReturn(Lists.newArrayList(new LinkEntity(), new LinkEntity()));
 
-    List<LinkEntity> links = linkService.find();
+    List<LinkEntity> links = linkService.find(1, 10);
 
     assertThat(links).hasSize(2);
   }

@@ -1,23 +1,24 @@
 package be.drissamri.rest;
 
 import be.drissamri.entity.LinkEntity;
+import be.drissamri.rest.resource.CollectionResource;
+import be.drissamri.rest.resource.LinkResource;
+import be.drissamri.rest.resource.Resource;
 import be.drissamri.service.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-@RestController
-@RequestMapping(LinkController.LINKS)
+@Component
+@Path(LinkController.LINKS)
 public class LinkController {
   public static final String LINKS = "/links";
   private LinkService linkService;
@@ -27,24 +28,46 @@ public class LinkController {
     this.linkService = linkService;
   }
 
-  @RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<LinkEntity>> find() {
-    List<LinkEntity> links = linkService.find();
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response find(@Context UriInfo uriInfo,
+                       @QueryParam("expand") @DefaultValue("false") boolean expand,
+                       @QueryParam("offset") @DefaultValue("1")     int offset,
+                       @QueryParam("limit")  @DefaultValue("10")    int limit) {
+    List<LinkEntity> foundLinks = linkService.find(offset, limit);
 
-    return ResponseEntity.ok().body(links);
+    List<Resource> resources = foundLinks
+      .stream()
+      .map(link -> expand ? new LinkResource(uriInfo, link) : new Resource(uriInfo, link.getHash()))
+      .collect(Collectors.toList());
+
+    CollectionResource collection = new CollectionResource(uriInfo, resources, offset, limit);
+    return Response.ok().entity(collection).build();
   }
 
-  @RequestMapping(method = POST,  consumes = APPLICATION_FORM_URLENCODED_VALUE, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<LinkEntity> createShortLink(@RequestParam("url") String url) {
+  @POST
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response createShortLink(@Context UriInfo uriInfo,
+                                  @FormParam("url") String url) {
     LinkEntity savedLink = linkService.create(url);
 
-    return ResponseEntity.ok().body(savedLink);
+    LinkResource link = new LinkResource(uriInfo, savedLink);
+    return created(link);
   }
 
-  @RequestMapping(method = DELETE)
-  public ResponseEntity<Void> deleteLinkByHash(@RequestParam(value = "hash") String hash) {
+  @DELETE
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response deleteLinkByHash(@PathParam(value = "hash") String hash) {
     linkService.deleteByHash(hash);
 
-    return ResponseEntity.noContent().build();
+    return Response.noContent().build();
   }
+
+  private Response created(Resource createdResource) {
+    String href = (String) createdResource.get("href");
+    URI uri = URI.create(href);
+    return Response.created(uri).entity(createdResource).build();
+  }
+
 }

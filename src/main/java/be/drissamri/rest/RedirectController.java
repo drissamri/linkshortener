@@ -2,13 +2,17 @@ package be.drissamri.rest;
 
 import be.drissamri.service.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-@Controller
-@RequestMapping("/")
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+
+@Component
+@Path("/")
 public class RedirectController {
   private LinkService linkService;
 
@@ -17,9 +21,19 @@ public class RedirectController {
     this.linkService = linkService;
   }
 
+  @GET
+  @Path("/{hash}")
+  public Response redirect(@PathParam("hash") String hash) {
+    Response response;
 
-  @RequestMapping(value = "{hash}", method = RequestMethod.GET)
-  public String redirect(@PathVariable("hash") String hash) {
-    return "redirect:" + linkService.findUrlByHash(hash);
+    String url = linkService.findUrlByHash(hash);
+    if (!StringUtils.isEmpty(url)) {
+      URI uri = URI.create(url);
+      response = Response.status(Response.Status.MOVED_PERMANENTLY).location(uri).build();
+    } else {
+      response = Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    return response;
   }
 }

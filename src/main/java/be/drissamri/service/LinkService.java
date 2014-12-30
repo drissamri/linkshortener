@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LinkService {
 
-  List<LinkEntity> find();
+  List<LinkEntity> find(int offset, int limit);
 
   LinkEntity create(String url);
 

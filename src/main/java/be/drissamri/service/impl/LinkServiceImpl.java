@@ -10,6 +10,9 @@ import be.drissamri.service.verifier.UrlVerifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +35,13 @@ public class LinkServiceImpl implements LinkService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<LinkEntity> find() {
-    List<LinkEntity> foundLinks = linkRepository.findAll();
+  public List<LinkEntity> find(int offset, int limit) {
+    int page = (int) Math.ceil(offset / limit);
+    Pageable pageRequest = new PageRequest(page, limit);
+    Page<LinkEntity> foundLinks = linkRepository.findAll(pageRequest);
 
-    logger.trace("Found {} foundLinks", foundLinks.size());
-    return foundLinks;
+    logger.debug("Found {} links", foundLinks.getTotalElements());
+    return foundLinks.getContent();
   }
 
   @Override
@@ -76,13 +81,12 @@ public class LinkServiceImpl implements LinkService {
 
   @Override
   public String findUrlByHash(String hash) {
-    String url;
+    String url = null;
 
     logger.trace("Retrieving link for the hash: ", hash);
     LinkEntity foundLink = linkRepository.findByHash(hash);
     if (foundLink == null) {
       logger.info("No link found for hash: {}", hash);
-      url = "http://www.drissamri.be";
     } else {
       logger.debug("Found link corresponding to the hash: {} is {}", foundLink);
       url = foundLink.getUrl();

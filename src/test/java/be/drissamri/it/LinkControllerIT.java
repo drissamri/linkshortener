@@ -3,7 +3,9 @@ package be.drissamri.it;
 import be.drissamri.Application;
 import be.drissamri.entity.LinkEntity;
 import be.drissamri.rest.LinkController;
+import be.drissamri.rest.resource.Resource;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.path.json.JsonPath;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,17 +52,15 @@ public class LinkControllerIT {
     .then()
       .statusCode(HttpStatus.OK.value());
      // @formatter:on
-
   }
 
   @Test
   public void shouldReturnOKNoContentWhenCreatingLinkAndDeleteAfterward() {
     // @formatter:off
-    LinkEntity savedLink = createLink(LONG_URL);
+    String savedLink = createLink(LONG_URL);
 
     given()
-      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-      .queryParam(PARAMETER_HASH, savedLink.getHash())
+      .pathParam(PARAMETER_HASH, savedLink)
     .delete(LinkController.LINKS)
     .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
@@ -70,28 +70,30 @@ public class LinkControllerIT {
   @Test
   public void shouldReturnOKWhenRedirectToUnknownHash() {
     // @formatter:off
-    LinkEntity savedLink = createLink(LONG_URL);
+    String savedLink = createLink(LONG_URL);
 
     given()
       .contentType(MediaType.APPLICATION_JSON_VALUE)
-      .pathParam(PARAMETER_HASH, savedLink.getHash())
+      .pathParam(PARAMETER_HASH, savedLink)
     .get("/{hash}")
     .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
      // @formatter:off
   }
 
-  private LinkEntity createLink(String url) {
+  private String createLink(String url) {
     // @formatter:off
-    return given()
+    JsonPath result = given()
             .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .formParameter(PARAMETER_URL, url)
           .post(LinkController.LINKS)
           .then()
-            .statusCode(HttpStatus.OK.value())
-            .body(PARAMETER_URL, is(url))
+            .statusCode(HttpStatus.CREATED.value())
             .body(PARAMETER_HASH, not(empty()))
-            .extract().as(LinkEntity.class);
+            .extract().body().jsonPath();
+
      // @formatter:on
+
+    return result.get("href");
   }
 }
