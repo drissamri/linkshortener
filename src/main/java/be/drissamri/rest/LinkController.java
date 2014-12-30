@@ -57,6 +57,7 @@ public class LinkController {
   }
 
   @DELETE
+  @Path("/{hash}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response deleteLinkByHash(@PathParam(value = "hash") String hash) {
     linkService.deleteByHash(hash);

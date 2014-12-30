@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 
 @Component
-@Path("/")
+@Path("/redirect")
 public class RedirectController {
   private LinkService linkService;
 

@@ -1,9 +1,7 @@
 package be.drissamri.it;
 
 import be.drissamri.Application;
-import be.drissamri.entity.LinkEntity;
 import be.drissamri.rest.LinkController;
-import be.drissamri.rest.resource.Resource;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.path.json.JsonPath;
 import org.junit.Before;
@@ -19,9 +17,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.given;
+import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -31,6 +29,7 @@ public class LinkControllerIT {
   private static final String LONG_URL = "http://www.drissamri.be";
   private static final String PARAMETER_HASH = "hash";
   private static final String PARAMETER_URL = "url";
+  public static final String API_V1 = "/api/v1";
 
   @Value("${local.server.port}")
   private int port;
@@ -48,7 +47,7 @@ public class LinkControllerIT {
 
     given()
       .contentType(MediaType.APPLICATION_JSON_VALUE)
-    .get(LinkController.LINKS)
+    .get(API_V1 + LinkController.LINKS)
     .then()
       .statusCode(HttpStatus.OK.value());
      // @formatter:on
@@ -61,39 +60,38 @@ public class LinkControllerIT {
 
     given()
       .pathParam(PARAMETER_HASH, savedLink)
-    .delete(LinkController.LINKS)
+    .delete(API_V1 + LinkController.LINKS + "/{hash}")
     .then()
-      .statusCode(HttpStatus.NO_CONTENT.value());
+      .statusCode(NO_CONTENT.getStatusCode());
      // @formatter:off
   }
 
   @Test
-  public void shouldReturnOKWhenRedirectToUnknownHash() {
+  public void shouldReturnOKAfterRedirectToKnownHash() {
     // @formatter:off
     String savedLink = createLink(LONG_URL);
 
     given()
       .contentType(MediaType.APPLICATION_JSON_VALUE)
       .pathParam(PARAMETER_HASH, savedLink)
-    .get("/{hash}")
+    .get(API_V1 + "/redirect/{hash}")
     .then()
-      .statusCode(HttpStatus.CREATED.value());
+      .statusCode(OK.getStatusCode());
      // @formatter:off
   }
 
   private String createLink(String url) {
     // @formatter:off
-    JsonPath result = given()
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-            .formParameter(PARAMETER_URL, url)
-          .post(LinkController.LINKS)
-          .then()
-            .statusCode(HttpStatus.CREATED.value())
-            .body(PARAMETER_HASH, not(empty()))
-            .extract().body().jsonPath();
-
+       JsonPath result = given()
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        .formParameter(PARAMETER_URL, url)
+      .post("/api/v1" + LinkController.LINKS)
+      .then()
+        .statusCode(CREATED.getStatusCode())
+        .body(PARAMETER_HASH, not(empty()))
+        .extract().body().jsonPath();
      // @formatter:on
 
-    return result.get("href");
+    return result.get("hash");
   }
 }
