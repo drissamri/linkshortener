@@ -1,0 +1,9 @@
+---
+applications:
+  - name: linkshortener-web
+    memory: 512M
+    instances: 1
+    path: target/linkshortener-web-1.0.0.jar
+    buildpack: https://github.com/cloudfoundry/java-buildpack
+    env:
+       SPRING_PROFILES_DEFAULT: cloud
