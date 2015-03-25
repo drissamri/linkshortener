@@ -26,47 +26,40 @@ package be.drissamri.config.safebrowsing.phishtank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 @Component
+@Conditional(PhishTankCondition.class)
 public class PhishTankConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PhishTankConfig.class);
-    private static final String PARAMETER_API_KEY = "app_key";
-    private static final String PARAMETER_FORMAT = "format";
-    private static final String RESPONSE_FORMAT = "json";
-    private final String apiUrl;
-    private final MultiValueMap<String, String> parameters;
-    private final boolean isConfigured;
+  private static final Logger LOGGER = LoggerFactory.getLogger(PhishTankConfig.class);
+  private static final String PARAMETER_API_KEY = "app_key";
+  private static final String PARAMETER_FORMAT = "format";
+  private static final String RESPONSE_FORMAT = "json";
+  private final String apiUrl;
+  private final MultiValueMap<String, String> parameters;
 
-    @Autowired
-    public PhishTankConfig(PhishTankSettings settings) {
-        this.apiUrl = settings.getEndpoint();
-        this.parameters = new LinkedMultiValueMap<>();
-        parameters.add(PARAMETER_API_KEY, settings.getCredential());
-        parameters.add(PARAMETER_FORMAT, RESPONSE_FORMAT);
+  @Autowired
+  public PhishTankConfig(PhishTankSettings settings) {
+    this.apiUrl = settings.getEndpoint();
+    this.parameters = new LinkedMultiValueMap<>();
+    parameters.add(PARAMETER_API_KEY, settings.getCredential());
+    parameters.add(PARAMETER_FORMAT, RESPONSE_FORMAT);
 
-        if (!StringUtils.isEmpty(parameters.getFirst(PARAMETER_API_KEY))
-            && !StringUtils.isEmpty(parameters.get(PARAMETER_FORMAT))) {
-            LOGGER.info("PhishTank API is configured with an API key");
-            isConfigured = true;
-        } else {
-            isConfigured = false;
-        }
+    if (!StringUtils.isEmpty(parameters.getFirst(PARAMETER_API_KEY))
+      && !StringUtils.isEmpty(parameters.get(PARAMETER_FORMAT))) {
+      LOGGER.info("PhishTank API is configured with an API key");
     }
+  }
 
-    public final String getApiUrl() {
-        return apiUrl;
-    }
+  public final String getApiUrl() {
+    return apiUrl;
+  }
 
-    public final MultiValueMap<String, String> getParameters() {
-        return new LinkedMultiValueMap<>(parameters);
-    }
-
-    public final boolean isConfigured() {
-        return isConfigured;
-    }
-
+  public final MultiValueMap<String, String> getParameters() {
+    return new LinkedMultiValueMap<>(parameters);
+  }
 }

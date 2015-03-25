@@ -23,10 +23,12 @@
  */
 package be.drissamri.service.verifier;
 
+import be.drissamri.config.safebrowsing.google.GoogleCondition;
 import be.drissamri.config.safebrowsing.google.GoogleSafeBrowsingConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -41,6 +43,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Component
+@Conditional(GoogleCondition.class)
 public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
   private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingUrlVerifier.class);
   private static final String PARAMETER_URL = "url";
@@ -75,10 +78,5 @@ public class GoogleSafeBrowsingUrlVerifier implements UrlVerifier {
     }
 
     return safe;
-  }
-
-  @Override
-  public boolean canValidate() {
-    return this.config.isConfigured();
   }
 }

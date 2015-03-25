@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -38,51 +39,43 @@ import org.springframework.util.StringUtils;
  * @version $Id$
  */
 @Component
+@Conditional(GoogleCondition.class)
 public class GoogleSafeBrowsingConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingConfig.class);
-    private static final String PARAMETER_API_KEY = "apiKey";
-    private static final String PARAMETER_API_VERSION = "apiVersion";
-    private static final String PARAMETER_APP_VERSION = "appVersion";
-    private static final String PARAMETER_APP_NAME = "client";
-    private final Map<String, String> parameters;
-    private final String apiUrl;
-    private final boolean isConfigured;
+  private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingConfig.class);
+  private static final String PARAMETER_API_KEY = "apiKey";
+  private static final String PARAMETER_API_VERSION = "apiVersion";
+  private static final String PARAMETER_APP_VERSION = "appVersion";
+  private static final String PARAMETER_APP_NAME = "client";
+  private final Map<String, String> parameters;
+  private final String apiUrl;
 
-    @Autowired
-    public GoogleSafeBrowsingConfig(GoogleApiSettings server, ApplicationSettings app) {
-        this.parameters = populateParameterMap(server, app);
-        this.apiUrl = server.getEndpoint();
+  @Autowired
+  public GoogleSafeBrowsingConfig(GoogleApiSettings server, ApplicationSettings app) {
+    this.parameters = populateParameterMap(server, app);
+    this.apiUrl = server.getEndpoint();
 
-        if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) &&
-            !StringUtils.isEmpty(parameters.get(PARAMETER_API_VERSION))) {
-            LOGGER.info("Google Safe Browsing API is configured with an API key");
-            isConfigured = true;
-        } else {
-            isConfigured = false;
-        }
+    if (!StringUtils.isEmpty(parameters.get(PARAMETER_API_KEY)) &&
+      !StringUtils.isEmpty(parameters.get(PARAMETER_API_VERSION))) {
+      LOGGER.info("Google Safe Browsing API is configured with an API key");
     }
+  }
 
-    private HashMap<String, String> populateParameterMap(
-        GoogleApiSettings server,
-        ApplicationSettings app) {
-        final HashMap<String, String> map = new HashMap<>();
-        map.put(PARAMETER_API_KEY, server.getCredential());
-        map.put(PARAMETER_API_VERSION, server.getVersion());
-        map.put(PARAMETER_APP_VERSION, app.getVersion());
-        map.put(PARAMETER_APP_NAME, app.getName());
-        return map;
-    }
+  private HashMap<String, String> populateParameterMap(
+    GoogleApiSettings server,
+    ApplicationSettings app) {
+    final HashMap<String, String> map = new HashMap<>();
+    map.put(PARAMETER_API_KEY, server.getCredential());
+    map.put(PARAMETER_API_VERSION, server.getVersion());
+    map.put(PARAMETER_APP_VERSION, app.getVersion());
+    map.put(PARAMETER_APP_NAME, app.getName());
+    return map;
+  }
 
-    public final String getApiUrl() {
-        return apiUrl;
-    }
+  public final String getApiUrl() {
+    return apiUrl;
+  }
 
-    public final Map<String, String> getParameters() {
-        return new HashMap<>(parameters);
-    }
-
-    public final boolean isConfigured() {
-        return this.isConfigured;
-    }
-
+  public final Map<String, String> getParameters() {
+    return new HashMap<>(parameters);
+  }
 }

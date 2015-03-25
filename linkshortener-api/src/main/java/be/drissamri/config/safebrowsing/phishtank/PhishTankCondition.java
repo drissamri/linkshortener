@@ -23,38 +23,18 @@
  */
 package be.drissamri.config.safebrowsing.phishtank;
 
-import be.drissamri.config.safebrowsing.ApiSettings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.StringUtils;
 
-@Component
-@Conditional(PhishTankCondition.class)
-public class PhishTankSettings implements ApiSettings {
-  private final String endpoint;
-  private final String credential;
-
-  @Autowired
-  public PhishTankSettings(
-    @Value("${provider.phishtank.url}") final String endpoint,
-    @Value("${provider.phishtank.key}") final String credential) {
-    this.endpoint = endpoint;
-    this.credential = credential;
-  }
-
+public class PhishTankCondition implements Condition {
   @Override
-  public final String getEndpoint() {
-    return this.endpoint;
-  }
+  public boolean matches(
+    final ConditionContext context,
+    final AnnotatedTypeMetadata annotatedTypeMetadata) {
+    final String apiKey = context.getEnvironment().getProperty("provider.phishtank.key");
 
-  @Override
-  public final String getCredential() {
-    return this.credential;
-  }
-
-  @Override
-  public final String getVersion() {
-    return "v1";
+    return !StringUtils.isEmpty(apiKey);
   }
 }

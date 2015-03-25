@@ -23,12 +23,14 @@
  */
 package be.drissamri.service.verifier;
 
+import be.drissamri.config.safebrowsing.phishtank.PhishTankCondition;
 import be.drissamri.config.safebrowsing.phishtank.PhishTankConfig;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -42,6 +44,7 @@ import org.springframework.web.client.RestTemplate;
  * @version $Id$
  */
 @Component
+@Conditional(PhishTankCondition.class)
 public class PhishTankUrlVerifier implements UrlVerifier {
   private static final Logger LOGGER = LoggerFactory.getLogger(GoogleSafeBrowsingUrlVerifier.class);
   private static final String PARAMETER_URL = "url";
@@ -76,10 +79,5 @@ public class PhishTankUrlVerifier implements UrlVerifier {
       LOGGER.warn("Something went wrong while processing PhishTank API: {}", exception);
     }
     return safe;
-  }
-
-  @Override
-  public final boolean canValidate() {
-    return this.config.isConfigured();
   }
 }

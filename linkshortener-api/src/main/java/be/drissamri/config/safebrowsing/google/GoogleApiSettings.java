@@ -26,9 +26,11 @@ package be.drissamri.config.safebrowsing.google;
 import be.drissamri.config.safebrowsing.ApiSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 @Component
+@Conditional(GoogleCondition.class)
 public class GoogleApiSettings implements ApiSettings {
     private String endpoint;
     private String version;
