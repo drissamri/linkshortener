@@ -28,8 +28,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LinkRepository extends JpaRepository<LinkEntity, Long> {
 
-  public LinkEntity findByHash(String hash);
+  LinkEntity findByHash(String hash);
 
-  public LinkEntity findByUrl(String url);
+  LinkEntity findByUrl(String url);
 
 }

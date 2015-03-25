@@ -32,7 +32,7 @@ public class UrlVerifiers {
     }
 
     for (UrlVerifier verifier : verifiers) {
-      if (verifier != null && verifier.canValidate()) {
+      if (verifier != null) {
         boolean isValidByProvider = verifier.isSafe(encodedUrl);
         if (!isValidByProvider) {
           safe = false;

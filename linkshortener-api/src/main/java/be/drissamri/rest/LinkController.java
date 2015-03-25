@@ -28,7 +28,6 @@ import be.drissamri.rest.resource.CollectionResource;
 import be.drissamri.rest.resource.LinkResource;
 import be.drissamri.rest.resource.Resource;
 import be.drissamri.service.LinkService;
-import be.drissamri.service.exception.InvalidURLException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
