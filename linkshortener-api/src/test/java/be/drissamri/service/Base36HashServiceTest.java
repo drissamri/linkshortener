@@ -2,10 +2,12 @@ package be.drissamri.service;
 
 import be.drissamri.service.exception.InvalidURLException;
 import be.drissamri.service.impl.Base36HashService;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Ignore
 public class Base36HashServiceTest {
   private Base36HashService base36ShortenService = new Base36HashService();
 

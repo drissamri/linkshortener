@@ -1,3 +1,26 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Driss Amri
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package be.drissamri.service.impl;
 
 import be.drissamri.entity.LinkEntity;
@@ -7,6 +30,7 @@ import be.drissamri.service.LinkService;
 import be.drissamri.service.exception.InvalidURLException;
 import be.drissamri.service.exception.LinkNotFoundException;
 import be.drissamri.service.verifier.UrlVerifiers;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +40,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class LinkServiceImpl implements LinkService {
-  private static final Logger logger = LoggerFactory.getLogger(LinkServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LinkServiceImpl.class);
   private static final String URL_ENCODE_REGEX = "[a-zA-Z0-9_~-]+$";
   private LinkRepository linkRepository;
   private HashService shortenService;
-  private UrlVerifiers urlVerifiers;
+  private UrlVerifiers verifiers;
 
   @Autowired
-  public LinkServiceImpl(HashService shortenService, UrlVerifiers urlVerifiers, LinkRepository linkRepository) {
+  public LinkServiceImpl(HashService shortenService, UrlVerifiers verifiers, LinkRepository linkRepository) {
     this.linkRepository = linkRepository;
     this.shortenService = shortenService;
-    this.urlVerifiers = urlVerifiers;
+    this.verifiers = verifiers;
   }
 
   @Override
@@ -40,21 +62,21 @@ public class LinkServiceImpl implements LinkService {
     Pageable pageRequest = new PageRequest(page, limit);
     Page<LinkEntity> foundLinks = linkRepository.findAll(pageRequest);
 
-    logger.debug("Found {} links", foundLinks.getTotalElements());
+    LOGGER.debug("Found {} links", foundLinks.getTotalElements());
     return foundLinks.getContent();
   }
 
   @Override
   @Transactional
   public LinkEntity create(String url) {
-    logger.debug("Request to shorten: {}", url);
+    LOGGER.debug("Request to shorten: {}", url);
     LinkEntity resultLink;
 
-    boolean isSafeUrl = urlVerifiers.isSafe(url);
+    boolean isSafeUrl = verifiers.isSafe(url);
     if (isSafeUrl) {
       LinkEntity existingLink = linkRepository.findByUrl(url);
       if (existingLink != null) {
-        logger.debug("URL {} already exists in database: {}", url, existingLink);
+        LOGGER.debug("URL {} already exists in database: {}", url, existingLink);
         resultLink = existingLink;
       } else {
         resultLink = createAndSaveLink(url);
@@ -68,7 +90,7 @@ public class LinkServiceImpl implements LinkService {
   @Override
   @Transactional
   public void deleteByHash(String hash) {
-    logger.info("Delete request for link with hash: ", hash);
+    LOGGER.info("Delete request for link with hash: ", hash);
 
     LinkEntity foundLink = linkRepository.findByHash(hash);
     if (foundLink == null) {
@@ -76,19 +98,19 @@ public class LinkServiceImpl implements LinkService {
     }
 
     linkRepository.delete(foundLink);
-    logger.info("Deleted: {}", foundLink);
+    LOGGER.info("Deleted: {}", foundLink);
   }
 
   @Override
   public String findUrlByHash(String hash) {
     String url = null;
 
-    logger.trace("Retrieving link for the hash: ", hash);
+    LOGGER.trace("Retrieving link for the hash: ", hash);
     LinkEntity foundLink = linkRepository.findByHash(hash);
     if (foundLink == null) {
-      logger.info("No link found for hash: {}", hash);
+      LOGGER.info("No link found for hash: {}", hash);
     } else {
-      logger.debug("Found link corresponding to the hash: {} is {}", foundLink);
+      LOGGER.debug("Found link corresponding to the hash: {} is {}", foundLink);
       url = foundLink.getUrl();
     }
 
@@ -96,14 +118,11 @@ public class LinkServiceImpl implements LinkService {
   }
 
   private LinkEntity createAndSaveLink(String url) {
-    String hash = shortenService.shorten(url);
+    final String hash = shortenService.shorten(url);
+    LinkEntity link = linkRepository.save(
+      new LinkEntity(url, hash));
 
-    LinkEntity requestedLink = new LinkEntity();
-    requestedLink.setUrl(url);
-    requestedLink.setHash(hash);
-    LinkEntity savedLink = linkRepository.save(requestedLink);
-
-    logger.debug("Successfully created new link: {}", savedLink);
-    return savedLink;
+    LOGGER.debug("Successfully created new link: {}", link);
+    return link;
   }
 }

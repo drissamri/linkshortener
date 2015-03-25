@@ -16,13 +16,13 @@ public class Application {
   }
 
   @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate(clientHttpRequestFactory());
+  public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
+    return new RestTemplate(requestFactory);
   }
 
   @Bean
   public ClientHttpRequestFactory clientHttpRequestFactory() {
-    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+    final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
     factory.setReadTimeout(TWO_SECONDS);
     factory.setConnectTimeout(TWO_SECONDS);
     return factory;

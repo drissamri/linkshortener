@@ -21,41 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package be.drissamri.service.impl;
+(function (angular) {
+  'use strict';
 
-import be.drissamri.service.HashService;
-import be.drissamri.service.SupportedProtocol;
-import be.drissamri.service.exception.InvalidURLException;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+  angular
+    .module('linkApp')
+    .service('NotificationService', [ 'noty', function NotificationService(noty) {
 
-@Service
-public class Base36HashService implements HashService {
-  private static final int RADIX = 36;
-  private static final String PIPE = "-";
+      // var queue = [];
 
-  @Override
-  public String shorten(String url) {
-    return encode(url);
-  }
+      return {
+        //  queue: queue,
 
-  private String encode(String url) {
-    if (StringUtils.isEmpty(url)) {
-      throw new InvalidURLException("Supplied invalid url: empty");
-    }
+        add: function (item, type) {
+          noty.show(item, type);
 
-    boolean isSupportedProtocol = SupportedProtocol.contains(url);
-    if (!isSupportedProtocol) {
-      throw new InvalidURLException("URL protocol not supported");
-    }
+          /*queue.push(item);
 
-    String hexValue = Integer.toString(url.hashCode(), RADIX);
-    if (hexValue.startsWith(PIPE)) {
-      hexValue = hexValue.substring(1);
-    }
+           setTimeout(function () {
+           // remove the alert after 2000 ms
+           $('.alerts .alert').eq(0).remove();
+           queue.shift();
+           }, 4000);
+           */
+        }
 
-    // TODO: Implement database check to prevent collisions
-    return hexValue;
-  }
-
-}
+        //  pop: function () {
+        //    return this.queue.pop();
+        //  }
+      };
+    }])
+}(angular));

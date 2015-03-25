@@ -21,41 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package be.drissamri.service.impl;
+package be.drissamri.config.safebrowsing.phishtank;
 
-import be.drissamri.service.HashService;
-import be.drissamri.service.SupportedProtocol;
-import be.drissamri.service.exception.InvalidURLException;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import be.drissamri.config.safebrowsing.ApiSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@Service
-public class Base36HashService implements HashService {
-  private static final int RADIX = 36;
-  private static final String PIPE = "-";
+@Component
+public class PhishTankSettings implements ApiSettings {
+  private final String endpoint;
+  private final String credential;
+
+  @Autowired
+  public PhishTankSettings(
+    @Value("${provider.phishtank.url}") final String endpoint,
+    @Value("${provider.phishtank.key}") final String credential) {
+    this.endpoint = endpoint;
+    this.credential = credential;
+  }
 
   @Override
-  public String shorten(String url) {
-    return encode(url);
+  public final String getEndpoint() {
+    return this.endpoint;
   }
 
-  private String encode(String url) {
-    if (StringUtils.isEmpty(url)) {
-      throw new InvalidURLException("Supplied invalid url: empty");
-    }
-
-    boolean isSupportedProtocol = SupportedProtocol.contains(url);
-    if (!isSupportedProtocol) {
-      throw new InvalidURLException("URL protocol not supported");
-    }
-
-    String hexValue = Integer.toString(url.hashCode(), RADIX);
-    if (hexValue.startsWith(PIPE)) {
-      hexValue = hexValue.substring(1);
-    }
-
-    // TODO: Implement database check to prevent collisions
-    return hexValue;
+  @Override
+  public final String getCredential() {
+    return this.credential;
   }
 
+  @Override
+  public final String getVersion() {
+    return "v1";
+  }
 }

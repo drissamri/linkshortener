@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LinkController {
-  private LinkService linkService;
+  private final LinkService service;
 
   @Autowired
-  public LinkController(LinkService linkService) {
-    this.linkService = linkService;
+  public LinkController(LinkService srvc) {
+    this.service = srvc;
   }
 
   @RequestMapping("/links")
   public Link createLink(@RequestParam(value = "longUrl") String longUrl) {
-    return linkService.createLink(longUrl);
+    return service.createLink(longUrl);
   }
 }

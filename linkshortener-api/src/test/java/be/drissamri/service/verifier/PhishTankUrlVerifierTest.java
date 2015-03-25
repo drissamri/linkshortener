@@ -1,6 +1,7 @@
 package be.drissamri.service.verifier;
 
-import be.drissamri.config.safebrowsing.PhishTankConfig;
+import be.drissamri.config.safebrowsing.phishtank.PhishTankConfig;
+import be.drissamri.config.safebrowsing.phishtank.PhishTankSettings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,12 +24,14 @@ public class PhishTankUrlVerifierTest {
   private static final String JSON_SAFE_RESULT = "{ 'results': { 'in_database': false } }";
   private static final String JSON_UNKOWN_RESULT = "{ }";
 
-
-
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    phishTankUrlVerifier = new PhishTankUrlVerifier(restTemplate, new PhishTankConfig("apiKey", "apiUrl"));
+    phishTankUrlVerifier = new PhishTankUrlVerifier(
+        restTemplate,
+        new PhishTankConfig(
+            new PhishTankSettings("", "")
+        ));
   }
 
   @Test

@@ -1,47 +1,36 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Driss Amri
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package be.drissamri.config;
 
-import be.drissamri.config.safebrowsing.GoogleSafeBrowsingConfig;
-import be.drissamri.config.safebrowsing.PhishTankConfig;
-import be.drissamri.service.verifier.GoogleSafeBrowsingUrlVerifier;
-import be.drissamri.service.verifier.PhishTankUrlVerifier;
-import be.drissamri.service.verifier.UrlVerifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ServiceConfig {
-  @Value("${provider.google.api}")
-  private String googleApiKey;
-  @Value("${provider.google.url}")
-  private String googleApiUrl;
-  @Value("${provider.google.version}")
-  private String googleApiVersion;
-  @Value("${provider.phishtank.url}")
-  private String phishtankApiUrl;
-  @Value("${provider.phishtank.api}")
-  private String phishtankApiKey;
-  @Value("${info.build.name}")
-  private String appName;
-  @Value("${info.build.version}")
-  private String appVersion;
-
-  @Bean
-  public UrlVerifier googleSafetyProvider() {
-    GoogleSafeBrowsingConfig config = new GoogleSafeBrowsingConfig(googleApiKey, googleApiUrl, googleApiVersion, appName, appVersion);
-    return new GoogleSafeBrowsingUrlVerifier(restTemplate(), config);
-  }
-
-  @Bean
-  public UrlVerifier phishTankVerifier() {
-    PhishTankConfig config = new PhishTankConfig(phishtankApiKey, phishtankApiUrl);
-    return new PhishTankUrlVerifier(restTemplate(), config);
-  }
-
-  @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate();
-  }
-
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }

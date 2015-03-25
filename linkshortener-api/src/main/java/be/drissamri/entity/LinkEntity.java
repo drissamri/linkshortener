@@ -1,14 +1,43 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Driss Amri
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package be.drissamri.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Version;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners({AuditingEntityListener.class})
@@ -22,7 +51,6 @@ public class LinkEntity implements Serializable {
   private String url;
   @Column(name = "hash", nullable = false, unique = true)
   private String hash;
-
   @JsonIgnore
   @CreatedDate
   private ZonedDateTime createdDate;
@@ -33,8 +61,16 @@ public class LinkEntity implements Serializable {
   @Version
   private long version;
 
+  public LinkEntity() {
+  }
+
+  public LinkEntity(final String url, final String hash) {
+    this.hash = hash;
+    this.url = url;
+  }
+
   public long getId() {
-    return id;
+    return this.id;
   }
 
   public void setId(long id) {
@@ -42,7 +78,7 @@ public class LinkEntity implements Serializable {
   }
 
   public String getUrl() {
-    return url;
+    return this.url;
   }
 
   public void setUrl(String url) {
@@ -50,7 +86,7 @@ public class LinkEntity implements Serializable {
   }
 
   public String getHash() {
-    return hash;
+    return this.hash;
   }
 
   public void setHash(String hash) {
@@ -58,7 +94,7 @@ public class LinkEntity implements Serializable {
   }
 
   public ZonedDateTime getCreatedDate() {
-    return createdDate;
+    return this.createdDate;
   }
 
   public void setCreatedDate(ZonedDateTime createdDate) {
@@ -66,7 +102,7 @@ public class LinkEntity implements Serializable {
   }
 
   public ZonedDateTime getModifiedDate() {
-    return modifiedDate;
+    return this.modifiedDate;
   }
 
   public void setModifiedDate(ZonedDateTime modifiedDate) {
@@ -74,12 +110,12 @@ public class LinkEntity implements Serializable {
   }
 
   public long getVersion() {
-    return version;
+    return this.version;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, url, hash);
+    return Objects.hash(this.id, this.url, this.hash);
   }
 
   @Override
@@ -97,10 +133,10 @@ public class LinkEntity implements Serializable {
   @Override
   public String toString() {
     return "LinkEntity { " +
-      "id=" + Objects.toString(id) +
-      ", url='" + Objects.toString(url) +
-      ", hash='" + Objects.toString(hash) +
-      ", createdDate=" + Objects.toString(createdDate) +
-      ", modifiedDate=" + Objects.toString(modifiedDate) + '}';
+      "id=" + Objects.toString(this.id) +
+      ", url='" + Objects.toString(this.url) +
+      ", hash='" + Objects.toString(this.hash) +
+      ", createdDate=" + Objects.toString(this.createdDate) +
+      ", modifiedDate=" + Objects.toString(this.modifiedDate) + '}';
   }
 }

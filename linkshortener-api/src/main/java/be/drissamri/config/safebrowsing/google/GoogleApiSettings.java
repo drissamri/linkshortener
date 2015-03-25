@@ -21,41 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package be.drissamri.service.impl;
+package be.drissamri.config.safebrowsing.google;
 
-import be.drissamri.service.HashService;
-import be.drissamri.service.SupportedProtocol;
-import be.drissamri.service.exception.InvalidURLException;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import be.drissamri.config.safebrowsing.ApiSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@Service
-public class Base36HashService implements HashService {
-  private static final int RADIX = 36;
-  private static final String PIPE = "-";
+@Component
+public class GoogleApiSettings implements ApiSettings {
+    private String endpoint;
+    private String version;
+    private String credential;
 
-  @Override
-  public String shorten(String url) {
-    return encode(url);
-  }
-
-  private String encode(String url) {
-    if (StringUtils.isEmpty(url)) {
-      throw new InvalidURLException("Supplied invalid url: empty");
+    @Autowired
+    public GoogleApiSettings(
+        @Value("${provider.google.url:}") String url,
+        @Value("${provider.google.version:}") String version,
+        @Value("${provider.google.key:}") String key) {
+        this.endpoint = url;
+        this.version = version;
+        this.credential = key;
     }
 
-    boolean isSupportedProtocol = SupportedProtocol.contains(url);
-    if (!isSupportedProtocol) {
-      throw new InvalidURLException("URL protocol not supported");
+    @Override
+    public String getCredential() {
+        return credential;
     }
 
-    String hexValue = Integer.toString(url.hashCode(), RADIX);
-    if (hexValue.startsWith(PIPE)) {
-      hexValue = hexValue.substring(1);
+    @Override
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    // TODO: Implement database check to prevent collisions
-    return hexValue;
-  }
-
+    @Override
+    public String getVersion() {
+        return version;
+    }
 }

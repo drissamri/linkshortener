@@ -1,3 +1,3 @@
 (function(angular) {
-  var linkApp = angular.module('linkApp', []);
+  var linkApp = angular.module('linkApp', ['notyModule']);
 }(angular));

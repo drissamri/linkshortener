@@ -3,7 +3,8 @@
 
   angular
     .module('linkApp')
-    .service('LinkService', ['$http', '$q', '$log', function LinkService($http, $q, $log) {
+    .service('LinkService', ['$http', '$q', 'NotificationService',
+      function LinkService($http, $q, NotificationService) {
 
       return {
 
@@ -11,10 +12,10 @@
           var deferred = $q.defer();
 
           $http.get('/links?longUrl='+url)
-            .success(function(data) {
-              return deferred.resolve(data);
-            }).error(function(data) {
-              return deferred.resolve(data);
+            .success(function(link) {
+              return deferred.resolve(link);
+            }).error(function(error) {
+              NotificationService.add(error.message, 'error');
             });
 
           return deferred.promise;

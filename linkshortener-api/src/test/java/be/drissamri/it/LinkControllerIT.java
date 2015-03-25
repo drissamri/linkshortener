@@ -26,72 +26,72 @@ import static org.hamcrest.Matchers.empty;
 @WebAppConfiguration
 @IntegrationTest("server.port:0")
 public class LinkControllerIT {
-  private static final String LONG_URL = "http://www.drissamri.be";
-  private static final String PARAMETER_HASH = "hash";
-  private static final String PARAMETER_URL = "url";
-  public static final String API_V1 = "/api/v1";
+    private static final String LONG_URL = "http://www.drissamri.be";
+    private static final String PARAMETER_HASH = "hash";
+    private static final String PARAMETER_URL = "url";
+    public static final String API_V1 = "/api/v1";
 
-  @Value("${local.server.port}")
-  private int port;
+    @Value("${local.server.port}")
+    private int port;
 
-  @Before
-  public void setUp() {
-    RestAssured.authentication = basic("admin", "secret");
-    RestAssured.port = port;
-  }
+    @Before
+    public void setUp() {
+        RestAssured.authentication = basic("admin", "secret");
+        RestAssured.port = port;
+    }
 
-  @Test
-  public void shouldReturnOKWhenRetrievingAllLinks() {
-    // @formatter:off
-    createLink(LONG_URL);
+    @Test
+    public void shouldReturnOKWhenRetrievingAllLinks() {
+        // @formatter:off
+        createLink(LONG_URL);
 
-    given()
-      .contentType(MediaType.APPLICATION_JSON_VALUE)
-    .get(API_V1 + LinkController.LINKS)
-    .then()
-      .statusCode(HttpStatus.OK.value());
-     // @formatter:on
-  }
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .get(API_V1 + LinkController.LINKS)
+        .then()
+            .statusCode(HttpStatus.OK.value());
+        // @formatter:on
+    }
 
-  @Test
-  public void shouldReturnOKNoContentWhenCreatingLinkAndDeleteAfterward() {
-    // @formatter:off
-    String savedLink = createLink(LONG_URL);
+    @Test
+    public void shouldReturnOKNoContentWhenCreatingLinkAndDeleteAfterward() {
+        // @formatter:off
+        String savedLink = createLink(LONG_URL);
 
-    given()
-      .pathParam(PARAMETER_HASH, savedLink)
-    .delete(API_V1 + LinkController.LINKS + "/{hash}")
-    .then()
-      .statusCode(NO_CONTENT.getStatusCode());
-     // @formatter:off
-  }
+        given()
+            .pathParam(PARAMETER_HASH, savedLink)
+            .delete(API_V1 + LinkController.LINKS + "/{hash}")
+            .then()
+            .statusCode(NO_CONTENT.getStatusCode());
+        // @formatter:off
+    }
 
-  @Test
-  public void shouldReturnOKAfterRedirectToKnownHash() {
-    // @formatter:off
-    String savedLink = createLink(LONG_URL);
+    @Test
+    public void shouldReturnOKAfterRedirectToKnownHash() {
+        // @formatter:off
+        String savedLink = createLink(LONG_URL);
 
-    given()
-      .contentType(MediaType.APPLICATION_JSON_VALUE)
-      .pathParam(PARAMETER_HASH, savedLink)
-    .get(API_V1 + "/redirect/{hash}")
-    .then()
-      .statusCode(OK.getStatusCode());
-     // @formatter:off
-  }
+        given()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .pathParam(PARAMETER_HASH, savedLink)
+            .get(API_V1 + "/redirect/{hash}")
+            .then()
+            .statusCode(OK.getStatusCode());
+        // @formatter:off
+    }
 
-  private String createLink(String url) {
-    // @formatter:off
-       JsonPath result = given()
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-        .formParameter(PARAMETER_URL, url)
-      .post("/api/v1" + LinkController.LINKS)
-      .then()
-        .statusCode(CREATED.getStatusCode())
-        .body(PARAMETER_HASH, not(empty()))
-        .extract().body().jsonPath();
-     // @formatter:on
+    private String createLink(String url) {
+        // @formatter:off
+        JsonPath result = given()
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .formParameter(PARAMETER_URL, url)
+            .post("/api/v1" + LinkController.LINKS)
+            .then()
+            .statusCode(CREATED.getStatusCode())
+            .body(PARAMETER_HASH, not(empty()))
+            .extract().body().jsonPath();
+        // @formatter:on
 
-    return result.get("hash");
-  }
+        return result.get("hash");
+    }
 }

@@ -21,41 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package be.drissamri.service.impl;
+package be.drissamri.rest.provider;
 
-import be.drissamri.service.HashService;
-import be.drissamri.service.SupportedProtocol;
-import be.drissamri.service.exception.InvalidURLException;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import be.drissamri.service.exception.LinkshortenerException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
-@Service
-public class Base36HashService implements HashService {
-  private static final int RADIX = 36;
-  private static final String PIPE = "-";
-
+@Provider
+public class LinkshortenerExceptionMapper implements ExceptionMapper<LinkshortenerException> {
   @Override
-  public String shorten(String url) {
-    return encode(url);
+  public Response toResponse(LinkshortenerException exception) {
+    return Response.status(Response.Status.BAD_REQUEST)
+      .entity(exception.getMessage())
+      .type(MediaType.APPLICATION_JSON)
+      .build();
   }
-
-  private String encode(String url) {
-    if (StringUtils.isEmpty(url)) {
-      throw new InvalidURLException("Supplied invalid url: empty");
-    }
-
-    boolean isSupportedProtocol = SupportedProtocol.contains(url);
-    if (!isSupportedProtocol) {
-      throw new InvalidURLException("URL protocol not supported");
-    }
-
-    String hexValue = Integer.toString(url.hashCode(), RADIX);
-    if (hexValue.startsWith(PIPE)) {
-      hexValue = hexValue.substring(1);
-    }
-
-    // TODO: Implement database check to prevent collisions
-    return hexValue;
-  }
-
 }

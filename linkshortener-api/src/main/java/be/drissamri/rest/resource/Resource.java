@@ -5,7 +5,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.LinkedHashMap;
 
-public class Resource extends LinkedHashMap {
+public class Resource extends LinkedHashMap<String, Object> {
   public Resource(UriInfo uriInfo, String id) {
     UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
     UriBuilder path = uriBuilder.path(id);
@@ -15,7 +15,7 @@ public class Resource extends LinkedHashMap {
   }
 
   public Resource(UriInfo info) {
-    put("href", info.getAbsolutePath());
+    put("href", info.getAbsolutePath().toString());
   }
 
 }
